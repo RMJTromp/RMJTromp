@@ -1,7 +1,7 @@
-Hi 👋 My name is Raygell Tromp
+Hi 👋 My name is Raygell
 ==============================
 
-A software developer from Aruba based in the Netherlands
+A software developer from Aruba, experimenting with softwares since 2014.
 
 * 🌍  I'm based in the Netherlands
 * 🖥️  See my portfolio at [rmjtromp.com](http://rmjtromp.com)
