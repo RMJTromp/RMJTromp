@@ -5,7 +5,6 @@ A software developer from Aruba, experimenting with softwares since 2014.
 
 * 🌍  I'm based in the Netherlands
 * 🖥️  See my portfolio at [rmjtromp.com](http://rmjtromp.com)
-* ✉️  You can contact me at [me@rmjtromp.com](mailto:me@rmjtromp.com)
 * 🧠  I'm always learning something new.
 * 🚧  My latest project is [Brainfuck-Interpreter](https://github.com/RMJTromp/Brainfuck-Interpreter)
 
