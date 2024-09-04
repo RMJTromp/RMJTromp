@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "ESnext",
+        "target": "ESnext",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "types": ["node", "postcss-modules"],
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "paths": {
+            "~/*": ["src/*"]
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

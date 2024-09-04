@@ -1,56 +1,78 @@
-const canvas = document.createElement("canvas");
-document.body.append(canvas);
+import { spline } from "@georgedoescode/spline"
+import SimplexNoise from "simplex-noise";
 
-const ctx = canvas.getContext("2d");
+const section = document.querySelector("section#hero");
+const path = section.querySelector(".row[data-alignment=center] path");
 
-const radius = 50;
+let hueNoiseOffset = 0;
+let noiseStep = 0.0005;
 
-const mousePosition = {x:-radius, y:-radius};
-let touch = false;
-const offset = {
-    height: window.innerHeight - document.body.clientHeight,
-    width: window.innerWidth - document.body.clientWidth
+const simplex = new SimplexNoise();
+
+const points = createPoints();
+
+(function animate() {
+    path.setAttribute("d", spline(points, 1, true));
+
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
+
+        const nX = noise(point.noiseOffsetX, point.noiseOffsetX);
+        const nY = noise(point.noiseOffsetY, point.noiseOffsetY);
+        const x = map(nX, -1, 1, point.originX - 20, point.originX + 20);
+        const y = map(nY, -1, 1, point.originY - 20, point.originY + 20);
+
+        point.x = x;
+        point.y = y;
+
+        point.noiseOffsetX += noiseStep;
+        point.noiseOffsetY += noiseStep;
+    }
+
+    const hueNoise = noise(hueNoiseOffset, hueNoiseOffset);
+    const hue = map(hueNoise, -1, 1, 0, 360);
+
+    section.style.setProperty("--startColor", `hsl(${hue}, 100%, 75%)`);
+    section.style.setProperty("--stopColor", `hsl(${hue + 60}, 100%, 75%)`);
+    section.style.setProperty("--bgColor", `hsl(${hue + 60}, 75%, 5%)`);
+
+    hueNoiseOffset += noiseStep / 6;
+
+    requestAnimationFrame(animate);
+})();
+
+function map(n, start1, end1, start2, end2) {
+    return ((n - start1) / (end1 - start1)) * (end2 - start2) + start2;
 }
 
-const setPos = (x, y) => {
-    mousePosition.x = x;
-    mousePosition.y = y;
-
-    const top = Math.round((y - offset.height) / document.body.clientHeight * 10000) / 100;
-    const left = Math.round((x - offset.width) / document.body.clientWidth * 10000) / 100;
-
-    document.body.style.backgroundPosition = `${left}% ${top}%`;
-}
-const resetTouch = () => {
-    mousePosition.x = -radius;
-    mousePosition.y = -radius;
+function noise(x, y) {
+    return simplex.noise2D(x, y);
 }
 
-window.onmousemove = (e) => setPos(e.x, e.y);
-window.ontouchstart = (e) => { touch = true; setPos([...e.changedTouches][0].clientX, [...e.changedTouches][0].clientY) }
-window.ontouchmove = (e) => setPos([...e.changedTouches][0].clientX, [...e.changedTouches][0].clientY);
-window.ontouchend = () => resetTouch();
-window.ontouchcancel = () => resetTouch();
-window.onmouseup = (e) => { if(touch) resetTouch(); }
+function createPoints() {
+    const points = [];
+    const numPoints = 7;
+    const angleStep = (Math.PI * 2) / numPoints;
+    const rad = 75;
 
-window.onresize = (e) => {
-    canvas.width = document.body.clientWidth;
-    canvas.height = document.body.clientHeight;
+    for (let i = 1; i <= numPoints; i++) {
+        const theta = i * angleStep;
+
+        const x = 100 + Math.cos(theta) * rad;
+        const y = 100 + Math.sin(theta) * rad;
+
+        points.push({
+            x: x,
+            y: y,
+            originX: x,
+            originY: y,
+            noiseOffsetX: Math.random() * 1000,
+            noiseOffsetY: Math.random() * 1000
+        });
+    }
+
+    return points;
 }
-canvas.width = document.body.clientWidth;
-canvas.height = document.body.clientHeight;
 
-document.addEventListener('touchmove', function (event) {
-    if (event.scale !== 1) { event.preventDefault(); }
-}, { passive: false });
-
-const animationFrameCallback = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.arc(mousePosition.x - offset.width, mousePosition.y - offset.height, radius, 0, 2 * Math.PI, false);
-    ctx.fillStyle = 'white';
-    ctx.fill();
-
-    requestAnimationFrame(animationFrameCallback);
-};
-requestAnimationFrame(animationFrameCallback);
+path.mouseover = () => noiseStep = 0.005;
+path.mouseleave = () => noiseStep = 0.0005;
