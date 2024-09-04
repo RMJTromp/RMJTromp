@@ -3,7 +3,11 @@ import SimplexNoise from "simplex-noise";
 
 document.addEventListener("DOMContentLoaded", () => {
     const section = document.querySelector("section#hero");
-    const path = section.querySelector(".row[data-alignment=center] path");
+
+    const svg = section.querySelector(".row[data-alignment=center] svg");
+    svg.setAttribute("viewBox", "0 0 200 200");
+
+    const path = svg.querySelector("path");
 
     let hueNoiseOffset = 0;
     let noiseStep = 0.0005;
